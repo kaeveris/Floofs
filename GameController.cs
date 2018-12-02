@@ -23,16 +23,28 @@ public class GameController : MonoBehaviour {
 	public float spawnDistance = 5f;
 	public float spawnIncrement = 3f;
 	public float gameOverTimer = 3f;
+	public float spawnInterval = 5f;
+
+	private float spawnTimer;
 
 	// Use this for initialization
 	void Start () {
+
+		InstantiateFloof ();
+		InstantiateFloof ();
+		InstantiateFloof ();
+		InstantiateFloof ();
+		InstantiateFloof ();
+		InstantiateFloof ();
+
+		InstantiateEnemy ();
 	}
 	
 	// Update is called once per frame
 	void Update ()
 	{
 		if (player.dead == false) {
-			infoText.text = "Sacrifice floof to kill enemies!\nScore: " + Mathf.Floor (player.score);
+			infoText.text = "Sacrifice floof to kill enemies!\nAt least one pink and one blue needs to survive!\nScore: " + Mathf.Floor (player.score);
 		} else {
 			infoText.text = "All floofs died horrible death! :(\nScore: " + Mathf.Floor (player.score);
 			gameOverTimer -= Time.deltaTime;
@@ -46,13 +58,20 @@ public class GameController : MonoBehaviour {
 		int enemyReds = GameObject.FindGameObjectsWithTag ("EnemyRed").Length;
 		int enemyBlues = GameObject.FindGameObjectsWithTag ("EnemyBlue").Length;
 
-		if (floofReds + floofBlues > 10) {
+		if (floofReds + floofBlues > 5) {
 			if (player.transform.position.z > spawnPointer) {
 				InstantiateEnemy ();
 			}
 		} 
+		else if (floofReds < 1 || floofBlues < 1 ){
+			player.dead = true;
+		}
 		else {
-			InstantiateFloof ();
+			spawnTimer -= Time.deltaTime;
+			if (spawnTimer <= 0f) {
+				spawnTimer = spawnInterval;
+				InstantiateFloof ();
+			}
 		}
 	}
 
